@@ -2,7 +2,7 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem é Python.
 
-**Versão:** 1.2.0
+**Versão:** 1.3.0
 
 ## Tecnologias
 
