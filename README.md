@@ -2,11 +2,12 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem é Python.
 
-**Versão:** 1.0.0
+**Versão:** 1.1.0
 
 ## Tecnologias
 
 - React Native 0.88 com TypeScript
+- Supabase (autenticação e banco de dados)
 - Android (API mínima 24)
 
 ## Pré-requisitos
@@ -15,6 +16,12 @@ Aplicativo Android para aprender programação por meio de uma trilha de etapas 
 - Android Studio com Android SDK e um emulador
 - JDK 17
 - Git
+- Um projeto no Supabase
+
+## Configurar o Supabase
+
+1. Copie `.env.example` para `.env` e preencha `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY`.
+2. Aplique os arquivos de `supabase/migrations`, em ordem, no SQL Editor do painel ou com `supabase db push`.
 
 ## Executar
 
