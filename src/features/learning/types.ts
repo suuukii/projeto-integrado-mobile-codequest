@@ -10,6 +10,8 @@ export type Track = {
   slug: string;
   title: string;
   description: string;
+  /** Nome da linguagem ensinada na trilha, como "Python". */
+  languageName: string;
   stages: Stage[];
 };
 

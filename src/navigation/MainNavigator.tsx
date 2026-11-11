@@ -2,8 +2,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { StageResultScreen } from '../screens/learning/StageResultScreen';
 import { StageScreen } from '../screens/learning/StageScreen';
-import { TrackScreen } from '../screens/learning/TrackScreen';
 import { colors } from '../theme';
+import { TabNavigator } from './TabNavigator';
 import type { MainStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -16,7 +16,8 @@ export function MainNavigator() {
         contentStyle: { backgroundColor: colors.background },
       }}
     >
-      <Stack.Screen name="Track" component={TrackScreen} />
+      {/* As abas ficam na base; etapa e resultado abrem por cima, sem a barra. */}
+      <Stack.Screen name="Tabs" component={TabNavigator} />
       <Stack.Screen name="Stage" component={StageScreen} />
       <Stack.Screen name="StageResult" component={StageResultScreen} />
     </Stack.Navigator>

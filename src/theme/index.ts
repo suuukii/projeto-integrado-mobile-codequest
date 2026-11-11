@@ -19,6 +19,9 @@ export const colors = {
   error: '#FF7B7B',
   errorSoft: '#4F2C31',
   warning: '#F4BE5E',
+  tabBar: '#2D2B3D',
+  tabBarBorder: '#4A4470',
+  tabActive: '#D9C8FF',
 } as const;
 
 export const spacing = {

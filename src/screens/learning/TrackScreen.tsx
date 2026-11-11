@@ -1,20 +1,12 @@
+import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import type { CompositeScreenProps } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
 
 import { MessageBanner } from '../../components/MessageBanner';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/Screen';
-import { getAuthErrorMessage } from '../../features/auth/authErrors';
-import { signOut } from '../../features/auth/authService';
-import { useAuth } from '../../features/auth/AuthProvider';
 import { TrailHeader } from '../../features/learning/components/TrailHeader';
 import { TrailMap } from '../../features/learning/components/TrailMap';
 import { DEFAULT_TRACK_SLUG } from '../../features/learning/constants';
@@ -24,22 +16,20 @@ import {
 } from '../../features/learning/trackProgress';
 import type { StageWithStatus } from '../../features/learning/types';
 import { useTrack } from '../../features/learning/useTrack';
-import type { MainStackParamList } from '../../navigation/types';
-import { colors, spacing, typography } from '../../theme';
+import type {
+  MainStackParamList,
+  MainTabParamList,
+} from '../../navigation/types';
+import { colors, spacing } from '../../theme';
 
-type TrackScreenProps = NativeStackScreenProps<MainStackParamList, 'Track'>;
+type TrackScreenProps = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'Learn'>,
+  NativeStackScreenProps<MainStackParamList>
+>;
 
 export function TrackScreen({ navigation }: TrackScreenProps) {
-  const { session } = useAuth();
   const { data, failed, reload } = useTrack(DEFAULT_TRACK_SLUG);
-  const [signOutError, setSignOutError] = useState<string | null>(null);
   const [trailWidth, setTrailWidth] = useState(0);
-
-  const username: unknown = session?.user.user_metadata.username;
-
-  const handleSignOut = () => {
-    signOut().catch(error => setSignOutError(getAuthErrorMessage(error)));
-  };
 
   const handleStagePress = (stage: StageWithStatus) => {
     navigation.navigate('Stage', {
@@ -50,18 +40,7 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
   };
 
   return (
-    <Screen>
-      <View style={styles.topBar}>
-        <Text style={styles.greeting} numberOfLines={1}>
-          {typeof username === 'string' ? `Olá, ${username}!` : 'Olá!'}
-        </Text>
-        <Pressable accessibilityRole="button" hitSlop={8} onPress={handleSignOut}>
-          <Text style={styles.signOut}>Sair</Text>
-        </Pressable>
-      </View>
-
-      {signOutError && <MessageBanner message={signOutError} />}
-
+    <Screen insideTabs>
       {failed && !data && (
         <View style={styles.centered}>
           <MessageBanner message="Não foi possível carregar a trilha. Verifique sua conexão." />
@@ -103,14 +82,6 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  greeting: { ...typography.label, color: colors.textMuted, flex: 1 },
-  signOut: { ...typography.label, color: colors.primary, marginLeft: spacing.md },
   centered: { flex: 1, justifyContent: 'center' },
   trail: { flex: 1, marginHorizontal: -spacing.lg },
 });

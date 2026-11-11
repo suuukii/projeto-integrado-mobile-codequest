@@ -15,6 +15,31 @@ export async function fetchCompletedStageIds(
   return new Set(data.map(row => row.stage_id));
 }
 
+export type StageProgress = {
+  stageId: string;
+  firstTryCorrect: number;
+  totalQuestions: number;
+};
+
+/** Resultado registrado de cada etapa concluída pelo usuário. */
+export async function fetchStageProgress(
+  stageIds: readonly string[],
+): Promise<StageProgress[]> {
+  const { data, error } = await supabase
+    .from('user_progress')
+    .select('stage_id, first_try_correct, total_questions')
+    .in('stage_id', [...stageIds]);
+
+  if (error) {
+    throw error;
+  }
+  return data.map(row => ({
+    stageId: row.stage_id,
+    firstTryCorrect: row.first_try_correct,
+    totalQuestions: row.total_questions,
+  }));
+}
+
 export async function saveStageCompletion(
   userId: string,
   stageId: string,

@@ -6,9 +6,14 @@ export type Database = {
   public: {
     Tables: {
       profiles: {
-        Row: { id: string; username: string; created_at: Timestamp };
+        Row: {
+          id: string;
+          username: string;
+          avatar: string;
+          created_at: Timestamp;
+        };
         Insert: never;
-        Update: never;
+        Update: { avatar?: string };
         Relationships: [];
       };
       languages: {

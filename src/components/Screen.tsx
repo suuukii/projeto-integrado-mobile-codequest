@@ -17,6 +17,8 @@ type ScreenProps = PropsWithChildren<{
   showBackButton?: boolean;
   /** Conteúdo exibido ao lado da seta, como uma barra de progresso. */
   headerContent?: ReactNode;
+  /** Em telas de aba, a barra inferior já reserva o espaço do rodapé. */
+  insideTabs?: boolean;
 }>;
 
 export function Screen({
@@ -24,6 +26,7 @@ export function Screen({
   scrollable = false,
   showBackButton = false,
   headerContent,
+  insideTabs = false,
 }: ScreenProps) {
   const contentStyle = [
     scrollable ? styles.scrollContent : styles.content,
@@ -31,7 +34,10 @@ export function Screen({
   ];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={styles.safeArea}
+      edges={insideTabs ? ['top', 'left', 'right'] : undefined}
+    >
       {showBackButton && (
         <View style={styles.header}>
           <BackButton />
