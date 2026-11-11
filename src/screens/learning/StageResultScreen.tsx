@@ -19,7 +19,7 @@ export function StageResultScreen({
   const { title, firstTryCorrect, totalQuestions } = route.params;
 
   return (
-    <Screen>
+    <Screen showBackButton>
       <View style={styles.content}>
         <Logo size={140} />
         <Text style={styles.title}>Etapa concluída!</Text>

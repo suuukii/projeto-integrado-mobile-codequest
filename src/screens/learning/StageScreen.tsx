@@ -2,7 +2,6 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCallback } from 'react';
 import {
   ActivityIndicator,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -131,18 +130,12 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
   };
 
   return (
-    <Screen>
-      <View style={styles.topBar}>
-        <Pressable
-          accessibilityLabel="Sair da etapa"
-          accessibilityRole="button"
-          hitSlop={12}
-          onPress={navigation.goBack}
-        >
-          <Text style={styles.close}>✕</Text>
-        </Pressable>
+    <Screen
+      showBackButton
+      headerContent={
         <ProgressBar progress={session ? getSessionProgress(session) : 0} />
-      </View>
+      }
+    >
       {renderBody()}
     </Screen>
   );
@@ -150,13 +143,6 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  close: { fontSize: 22, color: colors.textMuted },
   centered: { flex: 1, justifyContent: 'center' },
   centeredText: {
     ...typography.body,

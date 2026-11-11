@@ -44,7 +44,7 @@ export function LoginScreen({ navigation, route }: LoginScreenProps) {
   };
 
   return (
-    <Screen scrollable>
+    <Screen scrollable showBackButton>
       <View style={styles.header}>
         <Logo />
         <Text style={styles.title}>Codequest</Text>

@@ -100,7 +100,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
   };
 
   return (
-    <Screen scrollable>
+    <Screen scrollable showBackButton>
       <Text style={styles.title}>Criar conta</Text>
 
       {submitError && <MessageBanner message={submitError} />}
@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
   title: {
     ...typography.title,
     color: colors.text,
-    marginTop: spacing.md,
     marginBottom: spacing.lg,
   },
   secondaryAction: { marginTop: spacing.md },
