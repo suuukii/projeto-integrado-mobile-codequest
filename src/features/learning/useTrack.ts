@@ -1,6 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 
+import { fetchCompletedStageIds } from './progressService';
 import { buildStagesWithStatus } from './trackProgress';
 import { fetchTrackBySlug } from './trackService';
 import type { StageWithStatus, Track } from './types';
@@ -12,7 +13,13 @@ type TrackData = {
 
 async function loadTrack(slug: string): Promise<TrackData> {
   const track = await fetchTrackBySlug(slug);
-  return { track, stages: buildStagesWithStatus(track.stages, new Set()) };
+  const completedStageIds = await fetchCompletedStageIds(
+    track.stages.map(stage => stage.id),
+  );
+  return {
+    track,
+    stages: buildStagesWithStatus(track.stages, completedStageIds),
+  };
 }
 
 export function useTrack(slug: string) {

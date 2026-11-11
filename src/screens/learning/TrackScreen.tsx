@@ -1,3 +1,4 @@
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -20,9 +21,12 @@ import { DEFAULT_TRACK_SLUG } from '../../features/learning/constants';
 import { countCompletedStages } from '../../features/learning/trackProgress';
 import type { StageWithStatus } from '../../features/learning/types';
 import { useTrack } from '../../features/learning/useTrack';
+import type { MainStackParamList } from '../../navigation/types';
 import { colors, spacing, typography } from '../../theme';
 
-export function TrackScreen() {
+type TrackScreenProps = NativeStackScreenProps<MainStackParamList, 'Track'>;
+
+export function TrackScreen({ navigation }: TrackScreenProps) {
   const { session } = useAuth();
   const { data, failed, reload } = useTrack(DEFAULT_TRACK_SLUG);
   const [signOutError, setSignOutError] = useState<string | null>(null);
@@ -33,7 +37,9 @@ export function TrackScreen() {
     signOut().catch(error => setSignOutError(getAuthErrorMessage(error)));
   };
 
-  const handleStagePress = (_stage: StageWithStatus) => {};
+  const handleStagePress = (stage: StageWithStatus) => {
+    navigation.navigate('Stage', { stageId: stage.id, title: stage.title });
+  };
 
   const completedCount = data ? countCompletedStages(data.stages) : 0;
   const totalCount = data?.stages.length ?? 0;

@@ -1,0 +1,49 @@
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Logo } from '../../components/Logo';
+import { PrimaryButton } from '../../components/PrimaryButton';
+import { Screen } from '../../components/Screen';
+import type { MainStackParamList } from '../../navigation/types';
+import { colors, spacing, typography } from '../../theme';
+
+type StageResultScreenProps = NativeStackScreenProps<
+  MainStackParamList,
+  'StageResult'
+>;
+
+export function StageResultScreen({
+  navigation,
+  route,
+}: StageResultScreenProps) {
+  const { title, firstTryCorrect, totalQuestions } = route.params;
+
+  return (
+    <Screen>
+      <View style={styles.content}>
+        <Logo size={140} />
+        <Text style={styles.title}>Etapa concluída!</Text>
+        <Text style={styles.stage}>{title}</Text>
+        <Text style={styles.score}>
+          Acertos de primeira: {firstTryCorrect} de {totalQuestions}
+        </Text>
+      </View>
+      <PrimaryButton title="Voltar à trilha" onPress={navigation.goBack} />
+    </Screen>
+  );
+}
+
+const styles = StyleSheet.create({
+  content: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  title: {
+    ...typography.title,
+    color: colors.text,
+    marginTop: spacing.lg,
+  },
+  stage: { ...typography.heading, color: colors.primary },
+  score: {
+    ...typography.body,
+    color: colors.textMuted,
+    marginTop: spacing.md,
+  },
+});
