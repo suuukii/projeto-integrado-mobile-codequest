@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { fetchStageLesson } from './lessonService';
 import { saveStageCompletion } from './progressService';
 import { fetchStageQuestions } from './questionService';
 import {
@@ -11,7 +12,7 @@ import {
   selectOption,
   type StageSession,
 } from './stageSession';
-import type { StageResult } from './types';
+import type { LessonCard, StageResult } from './types';
 
 type Phase = 'loading' | 'load_failed' | 'ready' | 'saving' | 'save_failed';
 
@@ -21,15 +22,19 @@ export function useStageSession(
   onCompleted: (result: StageResult) => void,
 ) {
   const [session, setSession] = useState<StageSession | null>(null);
+  const [lessonCards, setLessonCards] = useState<LessonCard[]>([]);
+  const [lessonIndex, setLessonIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('loading');
 
   const load = useCallback(() => {
     let active = true;
     setPhase('loading');
-    fetchStageQuestions(stageId)
-      .then(questions => {
+    Promise.all([fetchStageQuestions(stageId), fetchStageLesson(stageId)])
+      .then(([questions, cards]) => {
         if (active) {
           setSession(createStageSession(questions));
+          setLessonCards(cards);
+          setLessonIndex(0);
           setPhase('ready');
         }
       })
@@ -78,5 +83,25 @@ export function useStageSession(
     }
   };
 
-  return { session, phase, reload: load, choose, verify, next, retrySave };
+  /** A explicação vem antes das questões; cada chamada avança um cartão. */
+  const lessonCard: LessonCard | undefined = lessonCards[lessonIndex];
+  const nextLessonCard = () => setLessonIndex(index => index + 1);
+  const lessonProgress = lessonCards.length
+    ? (lessonIndex + 1) / lessonCards.length
+    : 1;
+  const isLastLessonCard = lessonIndex === lessonCards.length - 1;
+
+  return {
+    session,
+    phase,
+    reload: load,
+    choose,
+    verify,
+    next,
+    retrySave,
+    lessonCard,
+    lessonProgress,
+    isLastLessonCard,
+    nextLessonCard,
+  };
 }

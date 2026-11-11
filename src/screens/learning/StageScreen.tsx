@@ -13,6 +13,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProgressBar } from '../../components/ProgressBar';
 import { Screen } from '../../components/Screen';
 import { useAuth } from '../../features/auth/AuthProvider';
+import { LessonCardView } from '../../features/learning/components/lesson/LessonCardView';
 import { QuestionView } from '../../features/learning/components/QuestionView';
 import { getSessionProgress } from '../../features/learning/stageSession';
 import type { StageResult } from '../../features/learning/types';
@@ -33,8 +34,19 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
     [navigation, title],
   );
 
-  const { session, phase, reload, choose, verify, next, retrySave } =
-    useStageSession(authSession?.user.id ?? '', stageId, handleCompleted);
+  const {
+    session,
+    phase,
+    reload,
+    choose,
+    verify,
+    next,
+    retrySave,
+    lessonCard,
+    lessonProgress,
+    isLastLessonCard,
+    nextLessonCard,
+  } = useStageSession(authSession?.user.id ?? '', stageId, handleCompleted);
 
   const question = session?.queue[0];
   const feedback = session?.feedback ?? null;
@@ -50,7 +62,7 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
     if (phase === 'load_failed') {
       return (
         <View style={styles.centered}>
-          <MessageBanner message="Não foi possível carregar as questões. Verifique sua conexão." />
+          <MessageBanner message="Não foi possível carregar esta etapa. Verifique sua conexão." />
           <PrimaryButton title="Tentar novamente" onPress={reload} />
         </View>
       );
@@ -69,6 +81,18 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
           <MessageBanner message="Não foi possível salvar seu progresso. Verifique sua conexão." />
           <PrimaryButton title="Tentar novamente" onPress={retrySave} />
         </View>
+      );
+    }
+    if (phase === 'ready' && lessonCard) {
+      return (
+        <>
+          {/* A chave reinicia as animações a cada novo cartão. */}
+          <LessonCardView key={lessonCard.id} card={lessonCard} />
+          <PrimaryButton
+            title={isLastLessonCard ? 'Começar exercícios' : 'Continuar'}
+            onPress={nextLessonCard}
+          />
+        </>
       );
     }
     if (!question || !session) {
@@ -133,7 +157,15 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
     <Screen
       showBackButton
       headerContent={
-        <ProgressBar progress={session ? getSessionProgress(session) : 0} />
+        <ProgressBar
+          progress={
+            lessonCard
+              ? lessonProgress
+              : session
+              ? getSessionProgress(session)
+              : 0
+          }
+        />
       }
     >
       {renderBody()}

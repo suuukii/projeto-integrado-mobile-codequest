@@ -37,6 +37,19 @@ export type MultipleChoiceQuestion = {
 /** Novos formatos de questão entram nesta união. */
 export type Question = MultipleChoiceQuestion;
 
+/** Ilustração animada exibida no topo de um cartão de explicação. */
+export type LessonVisual = 'mascot' | 'code' | 'points' | 'variable';
+
+export type LessonCard = {
+  id: string;
+  visual: LessonVisual;
+  title: string;
+  body: string;
+  codeSnippet: string | null;
+  codeOutput: string | null;
+  points: string[];
+};
+
 export type StageResult = {
   firstTryCorrect: number;
   totalQuestions: number;

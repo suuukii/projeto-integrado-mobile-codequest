@@ -133,6 +133,31 @@ export type Database = {
           },
         ];
       };
+      lesson_cards: {
+        Row: {
+          id: string;
+          stage_id: string;
+          position: number;
+          visual: 'mascot' | 'code' | 'points' | 'variable';
+          title: string;
+          body: string;
+          code_snippet: string | null;
+          code_output: string | null;
+          points: string[];
+          created_at: Timestamp;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [
+          {
+            foreignKeyName: 'lesson_cards_stage_id_fkey';
+            columns: ['stage_id'];
+            isOneToOne: false;
+            referencedRelation: 'stages';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: { [_ in never]: never };
     Functions: {
