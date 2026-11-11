@@ -5,6 +5,7 @@ import {
   getSessionProgress,
   getStageResult,
   isSessionFinished,
+  canCheckAnswer,
   selectOption,
   type StageSession,
 } from '../stageSession';
@@ -44,7 +45,7 @@ describe('sessão de uma etapa', () => {
       'a-wrong',
     );
     expect(session.queue.map(q => q.id)).toEqual(['b', 'a']);
-    expect(session.selectedOptionId).toBeNull();
+    expect(session.answer).toEqual([]);
     expect(session.feedback).toBeNull();
   });
 
@@ -69,7 +70,7 @@ describe('sessão de uma etapa', () => {
     const checked = checkAnswer(
       selectOption(createStageSession([question('a')]), 'a-wrong'),
     );
-    expect(selectOption(checked, 'a-right').selectedOptionId).toBe('a-wrong');
+    expect(selectOption(checked, 'a-right').answer).toEqual(['a-wrong']);
   });
 
   it('calcula o progresso e ignora respostas erradas', () => {
@@ -85,5 +86,46 @@ describe('sessão de uma etapa', () => {
 
   it('não considera concluída uma etapa sem questões', () => {
     expect(isSessionFinished(createStageSession([]))).toBe(false);
+  });
+});
+
+describe('questão de ordenar blocos', () => {
+  const ordering: Question = {
+    id: 'o',
+    type: 'code_order',
+    prompt: 'Ordene',
+    codeSnippet: null,
+    explanation: '',
+    options: [
+      { id: 'l2', text: 'b', isCorrect: true },
+      { id: 'l1', text: 'a', isCorrect: true },
+      { id: 'l3', text: 'c', isCorrect: true },
+    ],
+    correctOrder: ['l1', 'l2', 'l3'],
+  };
+
+  it('só permite verificar com todos os blocos posicionados', () => {
+    let session = createStageSession([ordering]);
+    session = selectOption(session, 'l1');
+    session = selectOption(session, 'l2');
+    expect(canCheckAnswer(session)).toBe(false);
+    session = selectOption(session, 'l3');
+    expect(session.answer).toEqual(['l1', 'l2', 'l3']);
+    expect(canCheckAnswer(session)).toBe(true);
+  });
+
+  it('remove um bloco ao tocar nele de novo', () => {
+    let session = createStageSession([ordering]);
+    session = selectOption(session, 'l1');
+    session = selectOption(session, 'l2');
+    session = selectOption(session, 'l1');
+    expect(session.answer).toEqual(['l2']);
+  });
+
+  it('aceita apenas a ordem correta', () => {
+    const pick = (ids: string[]) =>
+      ids.reduce(selectOption, createStageSession([ordering]));
+    expect(checkAnswer(pick(['l1', 'l2', 'l3'])).feedback).toBe('correct');
+    expect(checkAnswer(pick(['l2', 'l1', 'l3'])).feedback).toBe('incorrect');
   });
 });

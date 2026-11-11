@@ -34,7 +34,7 @@ export function OptionButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.option,
-        stateStyles[state],
+        optionStateStyles[state],
         pressed && styles.pressed,
       ]}
     >
@@ -60,7 +60,8 @@ const styles = StyleSheet.create({
   textDimmed: { color: colors.textDisabled },
 });
 
-const stateStyles = StyleSheet.create({
+/** Cores de cada estado, compartilhadas com os blocos de código. */
+export const optionStateStyles = StyleSheet.create({
   idle: { backgroundColor: colors.surface, borderColor: colors.border },
   selected: { backgroundColor: colors.primarySoft, borderColor: colors.primary },
   correct: { backgroundColor: colors.successSoft, borderColor: colors.success },

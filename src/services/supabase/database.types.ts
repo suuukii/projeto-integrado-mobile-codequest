@@ -70,7 +70,7 @@ export type Database = {
           id: string;
           stage_id: string;
           position: number;
-          type: 'multiple_choice';
+          type: 'multiple_choice' | 'code_completion' | 'code_order';
           prompt: string;
           code_snippet: string | null;
           explanation: string;

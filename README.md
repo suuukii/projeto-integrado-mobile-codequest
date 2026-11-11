@@ -2,7 +2,7 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem disponível é Python, e a estrutura permite adicionar outras linguagens e trilhas.
 
-**Versão:** 1.11.0
+**Versão:** 1.12.0
 
 ## Tecnologias
 
@@ -93,8 +93,9 @@ Abra o **SQL Editor** do painel e execute o conteúdo destes arquivos, nesta ord
 2. `supabase/migrations/20261110000200_seed_python_track.sql`
 3. `supabase/migrations/20261111000300_lesson_cards.sql`
 4. `supabase/migrations/20261111000400_profile_avatar.sql`
+5. `supabase/migrations/20261111000500_code_questions.sql`
 
-O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto.
+O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto. O quinto cria os formatos "completar o código" e "ordenar o código" e adiciona uma questão de cada formato por etapa, totalizando 36 questões.
 
 ### 6. Configurar o ambiente Android
 
@@ -245,17 +246,27 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 - **Passos:** escolha uma opção errada e toque em **Verificar** e **Continuar**. Responda às demais corretamente, inclusive a que voltar.
 - **Resultado esperado:** o botão **Verificar** só ativa com uma opção escolhida. A resposta errada fica vermelha, a certa fica verde, a explicação aparece e a questão errada volta no fim da etapa.
 
-### 20. Progressão pelas etapas
+### 20. Questão de completar o código
+- **Pré-condições:** explicações de uma etapa concluídas.
+- **Passos:** responda até chegar à questão marcada como **Complete o código**. Escolha um bloco errado, toque em **Verificar** e depois responda corretamente quando a questão voltar.
+- **Resultado esperado:** o código aparece com uma lacuna, e o bloco escolhido a preenche. **Verificar** só ativa com um bloco escolhido. Na verificação, o bloco certo fica verde, o escolhido errado fica vermelho e a lacuna ganha a mesma cor da resposta.
+
+### 21. Questão de ordenar o código
+- **Pré-condições:** explicações de uma etapa concluídas.
+- **Passos:** chegue à questão marcada como **Ordene o código**. Toque em um bloco e toque nele de novo. Depois monte o código fora de ordem e verifique. Quando a questão voltar, monte na ordem certa.
+- **Resultado esperado:** cada toque move o bloco para a área tracejada, com o número da linha, e tocar nele de novo o devolve. **Verificar** só ativa com todos os blocos posicionados. Na resposta errada, as linhas fora do lugar ficam vermelhas, as certas ficam verdes e aparece a ordem correta. Os blocos nunca aparecem já na ordem certa.
+
+### 22. Progressão pelas etapas
 - **Pré-condições:** etapa em andamento.
 - **Passos:** conclua todas as questões e toque em **Voltar à trilha**.
 - **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, o bloco da etapa fica roxo com ✓, a linha até a etapa seguinte fica roxa, a seguinte ganha o ▶ e o cartão do topo passa a mostrar o nome dela e o progresso atualizado.
 
-### 21. Avanço para a próxima etapa
+### 23. Avanço para a próxima etapa
 - **Pré-condições:** uma etapa concluída que não seja a última.
 - **Passos:** na tela de resultado, toque em **Próxima etapa**. Depois toque na seta de voltar.
 - **Resultado esperado:** a tela de resultado mostra "A seguir:" com o nome da próxima etapa e os botões **Próxima etapa** e **Voltar à trilha**. O primeiro abre a etapa seguinte, começando pelas explicações, e a seta volta para a trilha. Ao concluir a última etapa, só aparece **Voltar à trilha**.
 
-### 22. Registro e recuperação do progresso
+### 24. Registro e recuperação do progresso
 - **Pré-condições:** pelo menos uma etapa concluída.
 - **Passos:** saia da conta, entre novamente e consulte a tabela `user_progress` no painel.
 - **Resultado esperado:** a trilha mantém as etapas concluídas, e a tabela tem uma linha por etapa concluída.
@@ -285,12 +296,13 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 | --- | --- | --- |
 | "Variável de ambiente ausente" ao abrir | `.env` ausente ou incompleto | Preencha o `.env` e rode `npm start -- --reset-cache` |
 | Mudança no `.env` sem efeito | Cache do Metro | Rode `npm start -- --reset-cache` e recarregue o aplicativo |
-| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os quatro arquivos SQL na ordem indicada |
+| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os cinco arquivos SQL na ordem indicada |
 | "Conta criada. Confirme seu e-mail" | **Confirm email** ativo | Confirme pelo e-mail ou desative a opção |
 | Limite de envio de e-mails | Limite do serviço padrão do Supabase | Aguarde ou desative **Confirm email** |
 | "Não foi possível carregar esta etapa" | Tabela de explicações ausente ou sem conexão | Aplique as migrações e confira a conexão |
 | "Não foi possível carregar o perfil" | Quarta migração não aplicada ou sem conexão | Execute `20261111000400_profile_avatar.sql` e confira a conexão |
 | "Não foi possível salvar a foto" | Quarta migração não aplicada ou sem conexão | Execute `20261111000400_profile_avatar.sql` e tente de novo |
+| Etapa sem as questões de completar e de ordenar | Quinta migração não aplicada | Execute `20261111000500_code_questions.sql` uma única vez |
 | Erro `already exists` no SQL | Arquivo executado duas vezes | Não execute de novo. Em um projeto sem dados importantes, remova as tabelas antes de refazer |
 
 ### Execução e testes

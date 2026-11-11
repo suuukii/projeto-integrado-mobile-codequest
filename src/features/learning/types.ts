@@ -30,17 +30,32 @@ export type QuestionOption = {
   isCorrect: boolean;
 };
 
-export type MultipleChoiceQuestion = {
+type QuestionBase = {
   id: string;
-  type: 'multiple_choice';
   prompt: string;
   codeSnippet: string | null;
   explanation: string;
   options: QuestionOption[];
 };
 
+/** Escolher uma alternativa entre várias. */
+export type MultipleChoiceQuestion = QuestionBase & { type: 'multiple_choice' };
+
+/** Escolher o bloco que preenche a lacuna ___ do código. */
+export type CodeCompletionQuestion = QuestionBase & { type: 'code_completion' };
+
+/** Montar o código tocando nos blocos na ordem certa. */
+export type CodeOrderQuestion = QuestionBase & {
+  type: 'code_order';
+  /** Ids das opções na ordem correta; `options` vem embaralhada. */
+  correctOrder: string[];
+};
+
 /** Novos formatos de questão entram nesta união. */
-export type Question = MultipleChoiceQuestion;
+export type Question =
+  | MultipleChoiceQuestion
+  | CodeCompletionQuestion
+  | CodeOrderQuestion;
 
 /** Ilustração animada exibida no topo de um cartão de explicação. */
 export type LessonVisual = 'mascot' | 'code' | 'points' | 'variable';

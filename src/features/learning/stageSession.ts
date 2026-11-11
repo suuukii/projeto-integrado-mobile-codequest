@@ -6,7 +6,11 @@ export type StageSession = {
   /** Questões pendentes; a primeira é a questão em exibição. */
   queue: readonly Question[];
   totalQuestions: number;
-  selectedOptionId: string | null;
+  /**
+   * Resposta em construção: um id nas questões de escolha, ou os blocos na
+   * ordem escolhida nas questões de ordenar.
+   */
+  answer: readonly string[];
   feedback: AnswerFeedback | null;
   missedQuestionIds: readonly string[];
 };
@@ -15,19 +19,42 @@ export function createStageSession(questions: readonly Question[]): StageSession
   return {
     queue: questions,
     totalQuestions: questions.length,
-    selectedOptionId: null,
+    answer: [],
     feedback: null,
     missedQuestionIds: [],
   };
 }
 
+/**
+ * Nas questões de escolha, troca a opção escolhida. Nas de ordenar, adiciona o
+ * bloco ao fim da resposta ou o remove, se ele já estiver nela.
+ */
 export function selectOption(
   session: StageSession,
   optionId: string,
 ): StageSession {
-  return session.feedback
-    ? session
-    : { ...session, selectedOptionId: optionId };
+  const [question] = session.queue;
+  if (!question || session.feedback) {
+    return session;
+  }
+  if (question.type === 'code_order') {
+    const answer = session.answer.includes(optionId)
+      ? session.answer.filter(id => id !== optionId)
+      : [...session.answer, optionId];
+    return { ...session, answer };
+  }
+  return { ...session, answer: [optionId] };
+}
+
+/** A resposta pode ser verificada quando estiver completa. */
+export function canCheckAnswer(session: StageSession): boolean {
+  const [question] = session.queue;
+  if (!question || session.feedback) {
+    return false;
+  }
+  return question.type === 'code_order'
+    ? session.answer.length === question.options.length
+    : session.answer.length === 1;
 }
 
 export function isOptionCorrect(question: Question, optionId: string): boolean {
@@ -36,13 +63,26 @@ export function isOptionCorrect(question: Question, optionId: string): boolean {
   );
 }
 
+export function isAnswerCorrect(
+  question: Question,
+  answer: readonly string[],
+): boolean {
+  if (question.type === 'code_order') {
+    return (
+      answer.length === question.correctOrder.length &&
+      answer.every((id, index) => id === question.correctOrder[index])
+    );
+  }
+  return answer.length === 1 && isOptionCorrect(question, answer[0]);
+}
+
 export function checkAnswer(session: StageSession): StageSession {
   const [question] = session.queue;
-  if (!question || !session.selectedOptionId || session.feedback) {
+  if (!question || !canCheckAnswer(session)) {
     return session;
   }
 
-  const correct = isOptionCorrect(question, session.selectedOptionId);
+  const correct = isAnswerCorrect(question, session.answer);
   const alreadyMissed = session.missedQuestionIds.includes(question.id);
 
   return {
@@ -65,7 +105,7 @@ export function advance(session: StageSession): StageSession {
   return {
     ...session,
     queue: session.feedback === 'correct' ? rest : [...rest, question],
-    selectedOptionId: null,
+    answer: [],
     feedback: null,
   };
 }

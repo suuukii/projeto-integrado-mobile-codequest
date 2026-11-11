@@ -2,56 +2,87 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing, typography } from '../../../theme';
 import type { AnswerFeedback } from '../stageSession';
-import type { Question, QuestionOption } from '../types';
+import type { Question } from '../types';
 import { CodeBlock } from './CodeBlock';
-import { OptionButton, type OptionState } from './OptionButton';
+import { CodeCompletionView } from './CodeCompletionView';
+import { CodeOrderView } from './CodeOrderView';
+import { OptionButton } from './OptionButton';
+import { getOptionState } from './optionState';
 
 type QuestionViewProps = {
   question: Question;
-  selectedOptionId: string | null;
+  answer: readonly string[];
   feedback: AnswerFeedback | null;
   onSelect: (optionId: string) => void;
 };
 
-function getOptionState(
-  option: QuestionOption,
-  selectedOptionId: string | null,
-  feedback: AnswerFeedback | null,
-): OptionState {
-  const isSelected = option.id === selectedOptionId;
-  if (!feedback) {
-    return isSelected ? 'selected' : 'idle';
-  }
-  if (option.isCorrect) {
-    return 'correct';
-  }
-  return isSelected ? 'incorrect' : 'dimmed';
-}
+const TYPE_LABELS: Record<Question['type'], string> = {
+  multiple_choice: 'Escolha a resposta',
+  code_completion: 'Complete o código',
+  code_order: 'Ordene o código',
+};
 
 export function QuestionView({
   question,
-  selectedOptionId,
+  answer,
   feedback,
   onSelect,
 }: QuestionViewProps) {
+  const renderAnswer = () => {
+    switch (question.type) {
+      case 'code_completion':
+        return (
+          <CodeCompletionView
+            question={question}
+            answer={answer}
+            feedback={feedback}
+            onSelect={onSelect}
+          />
+        );
+      case 'code_order':
+        return (
+          <CodeOrderView
+            question={question}
+            answer={answer}
+            feedback={feedback}
+            onSelect={onSelect}
+          />
+        );
+      case 'multiple_choice':
+        return (
+          <>
+            {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
+            {question.options.map(option => (
+              <OptionButton
+                key={option.id}
+                text={option.text}
+                state={getOptionState(option, answer[0] ?? null, feedback)}
+                disabled={feedback !== null}
+                onPress={() => onSelect(option.id)}
+              />
+            ))}
+          </>
+        );
+    }
+  };
+
   return (
     <View>
+      <Text style={styles.typeLabel}>{TYPE_LABELS[question.type]}</Text>
       <Text style={styles.prompt}>{question.prompt}</Text>
-      {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
-      {question.options.map(option => (
-        <OptionButton
-          key={option.id}
-          text={option.text}
-          state={getOptionState(option, selectedOptionId, feedback)}
-          disabled={feedback !== null}
-          onPress={() => onSelect(option.id)}
-        />
-      ))}
+      {renderAnswer()}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  typeLabel: {
+    ...typography.label,
+    color: colors.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
+  },
   prompt: {
     ...typography.heading,
     color: colors.text,

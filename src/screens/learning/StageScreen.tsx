@@ -15,7 +15,10 @@ import { Screen } from '../../components/Screen';
 import { useAuth } from '../../features/auth/AuthProvider';
 import { LessonCardView } from '../../features/learning/components/lesson/LessonCardView';
 import { QuestionView } from '../../features/learning/components/QuestionView';
-import { getSessionProgress } from '../../features/learning/stageSession';
+import {
+  canCheckAnswer,
+  getSessionProgress,
+} from '../../features/learning/stageSession';
 import type { StageResult } from '../../features/learning/types';
 import { useStageSession } from '../../features/learning/useStageSession';
 import type { MainStackParamList } from '../../navigation/types';
@@ -114,7 +117,7 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
         >
           <QuestionView
             question={question}
-            selectedOptionId={session.selectedOptionId}
+            answer={session.answer}
             feedback={feedback}
             onSelect={choose}
           />
@@ -145,7 +148,7 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
         ) : (
           <PrimaryButton
             title="Verificar"
-            disabled={!session.selectedOptionId}
+            disabled={!canCheckAnswer(session)}
             onPress={verify}
           />
         )}
