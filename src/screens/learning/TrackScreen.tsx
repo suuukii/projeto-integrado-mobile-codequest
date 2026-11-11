@@ -18,7 +18,10 @@ import { useAuth } from '../../features/auth/AuthProvider';
 import { TrailHeader } from '../../features/learning/components/TrailHeader';
 import { TrailMap } from '../../features/learning/components/TrailMap';
 import { DEFAULT_TRACK_SLUG } from '../../features/learning/constants';
-import { countCompletedStages } from '../../features/learning/trackProgress';
+import {
+  countCompletedStages,
+  getFollowingStages,
+} from '../../features/learning/trackProgress';
 import type { StageWithStatus } from '../../features/learning/types';
 import { useTrack } from '../../features/learning/useTrack';
 import type { MainStackParamList } from '../../navigation/types';
@@ -39,7 +42,11 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
   };
 
   const handleStagePress = (stage: StageWithStatus) => {
-    navigation.navigate('Stage', { stageId: stage.id, title: stage.title });
+    navigation.navigate('Stage', {
+      stageId: stage.id,
+      title: stage.title,
+      nextStages: data ? getFollowingStages(data.stages, stage.id) : [],
+    });
   };
 
   return (

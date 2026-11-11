@@ -24,14 +24,14 @@ import { colors, radius, spacing, typography } from '../../theme';
 type StageScreenProps = NativeStackScreenProps<MainStackParamList, 'Stage'>;
 
 export function StageScreen({ navigation, route }: StageScreenProps) {
-  const { stageId, title } = route.params;
+  const { stageId, title, nextStages } = route.params;
   const { session: authSession } = useAuth();
 
   const handleCompleted = useCallback(
     (result: StageResult) => {
-      navigation.replace('StageResult', { title, ...result });
+      navigation.replace('StageResult', { title, nextStages, ...result });
     },
-    [navigation, title],
+    [navigation, title, nextStages],
   );
 
   const {

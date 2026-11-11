@@ -1,4 +1,8 @@
-import { buildStagesWithStatus, countCompletedStages } from '../trackProgress';
+import {
+  buildStagesWithStatus,
+  countCompletedStages,
+  getFollowingStages,
+} from '../trackProgress';
 import type { Stage } from '../types';
 
 const stage = (position: number): Stage => ({
@@ -40,5 +44,25 @@ describe('countCompletedStages', () => {
     expect(
       countCompletedStages(buildStagesWithStatus(stages, new Set(['s1']))),
     ).toBe(1);
+  });
+});
+
+describe('getFollowingStages', () => {
+  const trail: Stage[] = [
+    { id: 'c', position: 3, title: 'Três', description: '' },
+    { id: 'a', position: 1, title: 'Um', description: '' },
+    { id: 'b', position: 2, title: 'Dois', description: '' },
+  ];
+
+  it('devolve as etapas seguintes na ordem da trilha', () => {
+    expect(getFollowingStages(trail, 'a')).toEqual([
+      { id: 'b', title: 'Dois' },
+      { id: 'c', title: 'Três' },
+    ]);
+  });
+
+  it('devolve lista vazia na última etapa ou em etapa desconhecida', () => {
+    expect(getFollowingStages(trail, 'c')).toEqual([]);
+    expect(getFollowingStages(trail, 'x')).toEqual([]);
   });
 });

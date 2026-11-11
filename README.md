@@ -2,7 +2,7 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem disponível é Python, e a estrutura permite adicionar outras linguagens e trilhas.
 
-**Versão:** 1.9.0
+**Versão:** 1.10.0
 
 ## Tecnologias
 
@@ -211,7 +211,7 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 ### 13. Seta de voltar
 - **Pré-condições:** usuário autenticado na trilha.
 - **Passos:** abra uma etapa e toque na seta do canto superior esquerdo. Depois conclua uma etapa e toque na seta da tela de resultado.
-- **Resultado esperado:** a seta aparece no login, no cadastro, na etapa e no resultado, e sempre volta para a tela anterior. A apresentação e a trilha não têm seta, porque são as telas iniciais.
+- **Resultado esperado:** a seta aparece no login, no cadastro, na etapa e no resultado, e volta para a tela anterior. Depois de concluir uma etapa, a seta do resultado volta para a trilha. A apresentação e a trilha não têm seta, porque são as telas iniciais.
 
 ### 14. Visualização da trilha
 - **Pré-condições:** conta nova autenticada.
@@ -233,7 +233,12 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 - **Passos:** conclua todas as questões e toque em **Voltar à trilha**.
 - **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, o bloco da etapa fica roxo com ✓, a linha até a etapa seguinte fica roxa, a seguinte ganha o ▶ e o cartão do topo passa a mostrar o nome dela e o progresso atualizado.
 
-### 18. Registro e recuperação do progresso
+### 18. Avanço para a próxima etapa
+- **Pré-condições:** uma etapa concluída que não seja a última.
+- **Passos:** na tela de resultado, toque em **Próxima etapa**. Depois toque na seta de voltar.
+- **Resultado esperado:** a tela de resultado mostra "A seguir:" com o nome da próxima etapa e os botões **Próxima etapa** e **Voltar à trilha**. O primeiro abre a etapa seguinte, começando pelas explicações, e a seta volta para a trilha. Ao concluir a última etapa, só aparece **Voltar à trilha**.
+
+### 19. Registro e recuperação do progresso
 - **Pré-condições:** pelo menos uma etapa concluída.
 - **Passos:** saia da conta, entre novamente e consulte a tabela `user_progress` no painel.
 - **Resultado esperado:** a trilha mantém as etapas concluídas, e a tabela tem uma linha por etapa concluída.

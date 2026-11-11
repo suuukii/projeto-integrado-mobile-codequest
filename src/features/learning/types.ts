@@ -13,6 +13,9 @@ export type Track = {
   stages: Stage[];
 };
 
+/** Referência mínima a uma etapa, usada para navegar entre elas. */
+export type StageRef = { id: string; title: string };
+
 export type StageStatus = 'completed' | 'current' | 'locked';
 
 export type StageWithStatus = Stage & {

@@ -16,7 +16,19 @@ export function StageResultScreen({
   navigation,
   route,
 }: StageResultScreenProps) {
-  const { title, firstTryCorrect, totalQuestions } = route.params;
+  const { title, firstTryCorrect, totalQuestions, nextStages } = route.params;
+  const [nextStage, ...remainingStages] = nextStages;
+
+  const goToNextStage = () => {
+    if (nextStage) {
+      // Substitui o resultado para que voltar da próxima etapa leve à trilha.
+      navigation.replace('Stage', {
+        stageId: nextStage.id,
+        title: nextStage.title,
+        nextStages: remainingStages,
+      });
+    }
+  };
 
   return (
     <Screen showBackButton>
@@ -27,8 +39,20 @@ export function StageResultScreen({
         <Text style={styles.score}>
           Acertos de primeira: {firstTryCorrect} de {totalQuestions}
         </Text>
+        {nextStage && (
+          <Text style={styles.next}>A seguir: {nextStage.title}</Text>
+        )}
       </View>
-      <PrimaryButton title="Voltar à trilha" onPress={navigation.goBack} />
+      <View style={styles.actions}>
+        {nextStage && (
+          <PrimaryButton title="Próxima etapa" onPress={goToNextStage} />
+        )}
+        <PrimaryButton
+          title="Voltar à trilha"
+          variant={nextStage ? 'outlined' : 'filled'}
+          onPress={navigation.goBack}
+        />
+      </View>
     </Screen>
   );
 }
@@ -41,9 +65,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   stage: { ...typography.heading, color: colors.primary },
+  actions: { gap: spacing.sm },
   score: {
     ...typography.body,
     color: colors.textMuted,
     marginTop: spacing.md,
+  },
+  next: {
+    ...typography.body,
+    color: colors.text,
+    marginTop: spacing.sm,
   },
 });
