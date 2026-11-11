@@ -2,7 +2,7 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem disponível é Python, e a estrutura permite adicionar outras linguagens e trilhas.
 
-**Versão:** 1.5.1
+**Versão:** 1.6.0
 
 ## Tecnologias
 
@@ -146,77 +146,82 @@ npm test
 
 Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma senha válida como `Teste123!` e um e-mail ainda não cadastrado.
 
-### 1. Cadastro de usuário
-- **Pré-condições:** nenhuma sessão ativa, na tela de login.
-- **Passos:** toque em **Criar conta**, preencha todos os campos com dados válidos e toque em **Cadastrar**.
+### 1. Tela de apresentação
+- **Pré-condições:** nenhuma sessão ativa.
+- **Passos:** abra o aplicativo, toque em **Iniciar**, volte com o botão voltar do Android e toque em **Eu já tenho uma conta**.
+- **Resultado esperado:** o aplicativo abre na apresentação, com a logo e os dois botões. **Iniciar** leva ao cadastro e **Eu já tenho uma conta** leva ao login.
+
+### 2. Cadastro de usuário
+- **Pré-condições:** nenhuma sessão ativa, na tela de apresentação.
+- **Passos:** toque em **Iniciar**, preencha todos os campos com dados válidos e toque em **Cadastrar**.
 - **Resultado esperado:** o aplicativo abre a trilha com a saudação usando seu nome. O usuário aparece em **Authentication > Users** e em `profiles`.
 
-### 2. Validação de nome de usuário
+### 3. Validação de nome de usuário
 - **Pré-condições:** tela de cadastro aberta.
 - **Passos:** teste vazio, `ab`, `a b` e um nome já cadastrado, tocando em **Cadastrar** a cada vez.
 - **Resultado esperado:** uma mensagem em vermelho explica o problema e o cadastro não acontece. O nome repetido mostra "Este nome de usuário já está em uso."
 
-### 3. Validação de e-mail
+### 4. Validação de e-mail
 - **Pré-condições:** tela de cadastro aberta.
 - **Passos:** teste vazio, `errado`, `a@b` e um e-mail já cadastrado.
 - **Resultado esperado:** os formatos inválidos mostram erro no campo. O e-mail repetido mostra "Este e-mail já está cadastrado."
 
-### 4. Validação de senha
+### 5. Validação de senha
 - **Pré-condições:** tela de cadastro aberta.
 - **Passos:** preencha a senha com `abc` e toque em **Cadastrar**.
 - **Resultado esperado:** o campo fica vermelho e mostra "A senha não atende a todos os requisitos."
 
-### 5. Regras de caracteres da senha
+### 6. Regras de caracteres da senha
 - **Pré-condições:** tela de cadastro aberta.
 - **Passos:** digite aos poucos `Abcdef1!`.
 - **Resultado esperado:** cada regra passa de `○` para `✓` em verde quando é cumprida: tamanho, minúscula, maiúscula, número e caractere especial.
 
-### 6. Medidor de força da senha
+### 7. Medidor de força da senha
 - **Pré-condições:** tela de cadastro aberta.
 - **Passos:** digite `abc`, `Abcdefg1`, `Abcdef1!` e `Abcdefghij1!`.
 - **Resultado esperado:** o medidor mostra, nessa ordem, Fraca, Razoável, Boa e Forte, com mais segmentos preenchidos a cada nível.
 
-### 7. Confirmação de senha
+### 8. Confirmação de senha
 - **Pré-condições:** senha válida preenchida.
 - **Passos:** digite um valor diferente em **Confirmar senha** e depois o valor correto.
 - **Resultado esperado:** aparece "As senhas não são iguais." enquanto os valores diferem, e a mensagem some quando coincidem.
 
-### 8. Login
+### 9. Login
 - **Pré-condições:** conta criada e sessão encerrada.
 - **Passos:** entre primeiro com a senha errada e depois com a correta.
 - **Resultado esperado:** a senha errada mostra "E-mail ou senha incorretos." A correta abre a trilha.
 
-### 9. Logout
+### 10. Logout
 - **Pré-condições:** usuário autenticado na trilha.
 - **Passos:** toque em **Sair**.
-- **Resultado esperado:** o aplicativo volta para a tela de login.
+- **Resultado esperado:** o aplicativo volta para a tela de apresentação.
 
-### 10. Persistência da sessão
+### 11. Persistência da sessão
 - **Pré-condições:** usuário autenticado.
 - **Passos:** feche o aplicativo pela lista de recentes e abra novamente.
 - **Resultado esperado:** a trilha abre sem pedir login.
 
-### 11. Navegação para a área principal
+### 12. Navegação para a área principal
 - **Pré-condições:** nenhuma sessão ativa.
-- **Passos:** faça login e use o botão voltar do Android na trilha.
-- **Resultado esperado:** o login leva à trilha, e o botão voltar não retorna à tela de login.
+- **Passos:** toque em **Eu já tenho uma conta**, faça login e use o botão voltar do Android na trilha.
+- **Resultado esperado:** o login leva à trilha, e o botão voltar não retorna às telas de apresentação ou de login.
 
-### 12. Visualização da trilha
+### 13. Visualização da trilha
 - **Pré-condições:** conta nova autenticada.
 - **Passos:** observe a tela principal.
 - **Resultado esperado:** aparece "Fundamentos de Python", progresso 0/6, a primeira etapa como **Etapa atual** e as outras como **Bloqueada**, sem responder ao toque.
 
-### 13. Resolução das questões
+### 14. Resolução das questões
 - **Pré-condições:** primeira etapa disponível.
 - **Passos:** abra a etapa, escolha uma opção errada e toque em **Verificar** e **Continuar**. Responda às demais corretamente, inclusive a que voltar.
 - **Resultado esperado:** o botão **Verificar** só ativa com uma opção escolhida. A resposta errada fica vermelha, a certa fica verde, a explicação aparece e a questão errada volta no fim da etapa.
 
-### 14. Progressão pelas etapas
+### 15. Progressão pelas etapas
 - **Pré-condições:** etapa em andamento.
 - **Passos:** conclua todas as questões e toque em **Voltar à trilha**.
 - **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, a etapa fica **Concluída**, a seguinte vira **Etapa atual** e o progresso aumenta.
 
-### 15. Registro e recuperação do progresso
+### 16. Registro e recuperação do progresso
 - **Pré-condições:** pelo menos uma etapa concluída.
 - **Passos:** saia da conta, entre novamente e consulte a tabela `user_progress` no painel.
 - **Resultado esperado:** a trilha mantém as etapas concluídas, e a tabela tem uma linha por etapa concluída.
