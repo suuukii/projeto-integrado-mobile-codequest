@@ -2,7 +2,7 @@
 
 Aplicativo Android para aprender programação por meio de uma trilha de etapas e questões progressivas. A primeira linguagem disponível é Python, e a estrutura permite adicionar outras linguagens e trilhas.
 
-**Versão:** 1.7.0
+**Versão:** 1.8.0
 
 ## Tecnologias
 
@@ -213,8 +213,8 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 
 ### 14. Visualização da trilha
 - **Pré-condições:** conta nova autenticada.
-- **Passos:** observe a tela principal.
-- **Resultado esperado:** aparece "Fundamentos de Python", progresso 0/6, a primeira etapa como **Etapa atual** e as outras como **Bloqueada**, sem responder ao toque.
+- **Passos:** observe a tela principal e role até o fim da trilha.
+- **Resultado esperado:** o cartão do topo mostra "Fundamentos de Python", "1. Introdução ao Python" e o progresso 0/6. Abaixo, as 6 etapas aparecem como blocos em zigue-zague, ligados por linhas sobre um fundo pontilhado. A primeira tem o símbolo ▶ e um contorno roxo, e as outras têm um cadeado e não respondem ao toque.
 
 ### 15. Resolução das questões
 - **Pré-condições:** primeira etapa disponível.
@@ -224,7 +224,7 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 ### 16. Progressão pelas etapas
 - **Pré-condições:** etapa em andamento.
 - **Passos:** conclua todas as questões e toque em **Voltar à trilha**.
-- **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, a etapa fica **Concluída**, a seguinte vira **Etapa atual** e o progresso aumenta.
+- **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, o bloco da etapa fica roxo com ✓, a linha até a etapa seguinte fica roxa, a seguinte ganha o ▶ e o cartão do topo passa a mostrar o nome dela e o progresso atualizado.
 
 ### 17. Registro e recuperação do progresso
 - **Pré-condições:** pelo menos uma etapa concluída.

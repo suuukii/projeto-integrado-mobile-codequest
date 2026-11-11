@@ -2,8 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -11,12 +11,12 @@ import {
 
 import { MessageBanner } from '../../components/MessageBanner';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { ProgressBar } from '../../components/ProgressBar';
 import { Screen } from '../../components/Screen';
 import { getAuthErrorMessage } from '../../features/auth/authErrors';
 import { signOut } from '../../features/auth/authService';
 import { useAuth } from '../../features/auth/AuthProvider';
-import { StageCard } from '../../features/learning/components/StageCard';
+import { TrailHeader } from '../../features/learning/components/TrailHeader';
+import { TrailMap } from '../../features/learning/components/TrailMap';
 import { DEFAULT_TRACK_SLUG } from '../../features/learning/constants';
 import { countCompletedStages } from '../../features/learning/trackProgress';
 import type { StageWithStatus } from '../../features/learning/types';
@@ -30,6 +30,7 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
   const { session } = useAuth();
   const { data, failed, reload } = useTrack(DEFAULT_TRACK_SLUG);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  const [trailWidth, setTrailWidth] = useState(0);
 
   const username: unknown = session?.user.user_metadata.username;
 
@@ -40,9 +41,6 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
   const handleStagePress = (stage: StageWithStatus) => {
     navigation.navigate('Stage', { stageId: stage.id, title: stage.title });
   };
-
-  const completedCount = data ? countCompletedStages(data.stages) : 0;
-  const totalCount = data?.stages.length ?? 0;
 
   return (
     <Screen>
@@ -71,32 +69,27 @@ export function TrackScreen({ navigation }: TrackScreenProps) {
       )}
 
       {data && (
-        <FlatList
-          data={data.stages}
-          keyExtractor={stage => stage.id}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <View style={styles.header}>
-              <Text style={styles.title}>{data.track.title}</Text>
-              <Text style={styles.description}>{data.track.description}</Text>
-              <View style={styles.progressRow}>
-                <ProgressBar
-                  progress={totalCount ? completedCount / totalCount : 0}
-                />
-                <Text style={styles.progressText}>
-                  {completedCount}/{totalCount}
-                </Text>
-              </View>
-            </View>
-          }
-          renderItem={({ item, index }) => (
-            <StageCard
-              stage={item}
-              isLast={index === totalCount - 1}
-              onPress={handleStagePress}
-            />
-          )}
-        />
+        <>
+          <TrailHeader
+            trackTitle={data.track.title}
+            currentStage={data.stages.find(stage => stage.status === 'current')}
+            completedCount={countCompletedStages(data.stages)}
+            totalCount={data.stages.length}
+          />
+          <ScrollView
+            style={styles.trail}
+            showsVerticalScrollIndicator={false}
+            onLayout={event => setTrailWidth(event.nativeEvent.layout.width)}
+          >
+            {trailWidth > 0 && (
+              <TrailMap
+                stages={data.stages}
+                width={trailWidth}
+                onStagePress={handleStagePress}
+              />
+            )}
+          </ScrollView>
+        </>
       )}
     </Screen>
   );
@@ -112,17 +105,5 @@ const styles = StyleSheet.create({
   greeting: { ...typography.label, color: colors.textMuted, flex: 1 },
   signOut: { ...typography.label, color: colors.primary, marginLeft: spacing.md },
   centered: { flex: 1, justifyContent: 'center' },
-  header: { marginBottom: spacing.lg },
-  title: { ...typography.title, color: colors.text },
-  description: {
-    ...typography.body,
-    color: colors.textMuted,
-    marginBottom: spacing.md,
-  },
-  progressRow: { flexDirection: 'row', alignItems: 'center' },
-  progressText: {
-    ...typography.label,
-    color: colors.text,
-    marginLeft: spacing.md,
-  },
+  trail: { flex: 1, marginHorizontal: -spacing.lg },
 });
