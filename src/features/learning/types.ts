@@ -51,11 +51,18 @@ export type CodeOrderQuestion = QuestionBase & {
   correctOrder: string[];
 };
 
+/**
+ * Escrever livremente o trecho que preenche a lacuna ___ do código. Cada opção
+ * é uma resposta aceita; a primeira é a exibida como solução.
+ */
+export type CodeInputQuestion = QuestionBase & { type: 'code_input' };
+
 /** Novos formatos de questão entram nesta união. */
 export type Question =
   | MultipleChoiceQuestion
   | CodeCompletionQuestion
-  | CodeOrderQuestion;
+  | CodeOrderQuestion
+  | CodeInputQuestion;
 
 /** Ilustração animada exibida no topo de um cartão de explicação. */
 export type LessonVisual = 'mascot' | 'code' | 'points' | 'variable';

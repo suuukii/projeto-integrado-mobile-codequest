@@ -42,6 +42,7 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
     phase,
     reload,
     choose,
+    write,
     verify,
     next,
     retrySave,
@@ -114,12 +115,14 @@ export function StageScreen({ navigation, route }: StageScreenProps) {
           style={styles.flex}
           contentContainerStyle={styles.questionContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           <QuestionView
             question={question}
             answer={session.answer}
             feedback={feedback}
             onSelect={choose}
+            onChangeText={write}
           />
           {feedback && (
             <View

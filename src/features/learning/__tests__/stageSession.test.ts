@@ -7,6 +7,7 @@ import {
   isSessionFinished,
   canCheckAnswer,
   selectOption,
+  typeAnswer,
   type StageSession,
 } from '../stageSession';
 import type { Question } from '../types';
@@ -127,5 +128,46 @@ describe('questão de ordenar blocos', () => {
       ids.reduce(selectOption, createStageSession([ordering]));
     expect(checkAnswer(pick(['l1', 'l2', 'l3'])).feedback).toBe('correct');
     expect(checkAnswer(pick(['l2', 'l1', 'l3'])).feedback).toBe('incorrect');
+  });
+});
+
+describe('questão de escrever o código', () => {
+  const writing: Question = {
+    id: 'w',
+    type: 'code_input',
+    prompt: 'Escreva',
+    codeSnippet: 'print(___)',
+    explanation: '',
+    options: [
+      { id: 'w1', text: '"Codequest"', isCorrect: true },
+      { id: 'w2', text: 'nome', isCorrect: true },
+    ],
+  };
+
+  it('só permite verificar com algo digitado', () => {
+    const session = createStageSession([writing]);
+    expect(canCheckAnswer(typeAnswer(session, '   '))).toBe(false);
+    expect(canCheckAnswer(typeAnswer(session, 'x'))).toBe(true);
+  });
+
+  it('aceita qualquer resposta cadastrada, sem ligar para espaços e aspas', () => {
+    const check = (text: string) =>
+      checkAnswer(typeAnswer(createStageSession([writing]), text)).feedback;
+    expect(check(" 'Codequest' ")).toBe('correct');
+    expect(check('nome')).toBe('correct');
+    expect(check('Nome')).toBe('incorrect');
+    expect(check('Codequest')).toBe('incorrect');
+  });
+
+  it('ignora toques em opções e não muda o texto depois de verificar', () => {
+    let session = createStageSession([writing]);
+    expect(selectOption(session, 'w1').answer).toEqual([]);
+    session = checkAnswer(typeAnswer(session, 'errado'));
+    expect(typeAnswer(session, 'nome').answer).toEqual(['errado']);
+  });
+
+  it('não aceita texto digitado em outros formatos', () => {
+    const session = createStageSession([question('a')]);
+    expect(typeAnswer(session, 'a-right')).toBe(session);
   });
 });

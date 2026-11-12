@@ -1,3 +1,4 @@
+import { normalizeCode } from './questionBlocks';
 import type { Question, StageResult } from './types';
 
 export type AnswerFeedback = 'correct' | 'incorrect';
@@ -7,8 +8,9 @@ export type StageSession = {
   queue: readonly Question[];
   totalQuestions: number;
   /**
-   * Resposta em construção: um id nas questões de escolha, ou os blocos na
-   * ordem escolhida nas questões de ordenar.
+   * Resposta em construção: um id nas questões de escolha, os blocos na
+   * ordem escolhida nas questões de ordenar, ou o texto digitado nas questões
+   * de escrever.
    */
   answer: readonly string[];
   feedback: AnswerFeedback | null;
@@ -37,6 +39,9 @@ export function selectOption(
   if (!question || session.feedback) {
     return session;
   }
+  if (question.type === 'code_input') {
+    return session;
+  }
   if (question.type === 'code_order') {
     const answer = session.answer.includes(optionId)
       ? session.answer.filter(id => id !== optionId)
@@ -46,15 +51,29 @@ export function selectOption(
   return { ...session, answer: [optionId] };
 }
 
+/** Nas questões de escrever, guarda o texto digitado. */
+export function typeAnswer(session: StageSession, text: string): StageSession {
+  const [question] = session.queue;
+  if (!question || session.feedback || question.type !== 'code_input') {
+    return session;
+  }
+  return { ...session, answer: [text] };
+}
+
 /** A resposta pode ser verificada quando estiver completa. */
 export function canCheckAnswer(session: StageSession): boolean {
   const [question] = session.queue;
   if (!question || session.feedback) {
     return false;
   }
-  return question.type === 'code_order'
-    ? session.answer.length === question.options.length
-    : session.answer.length === 1;
+  switch (question.type) {
+    case 'code_order':
+      return session.answer.length === question.options.length;
+    case 'code_input':
+      return (session.answer[0] ?? '').trim().length > 0;
+    default:
+      return session.answer.length === 1;
+  }
 }
 
 export function isOptionCorrect(question: Question, optionId: string): boolean {
@@ -71,6 +90,13 @@ export function isAnswerCorrect(
     return (
       answer.length === question.correctOrder.length &&
       answer.every((id, index) => id === question.correctOrder[index])
+    );
+  }
+  if (question.type === 'code_input') {
+    const typed = normalizeCode(answer[0] ?? '');
+    return (
+      typed.length > 0 &&
+      question.options.some(option => normalizeCode(option.text) === typed)
     );
   }
   return answer.length === 1 && isOptionCorrect(question, answer[0]);

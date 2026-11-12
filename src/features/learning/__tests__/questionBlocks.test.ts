@@ -1,4 +1,4 @@
-import { shuffleBlocks, splitAtBlank } from '../questionBlocks';
+import { normalizeCode, shuffleBlocks, splitAtBlank } from '../questionBlocks';
 
 describe('splitAtBlank', () => {
   it('separa o código antes e depois da lacuna', () => {
@@ -28,5 +28,30 @@ describe('shuffleBlocks', () => {
   it('aceita listas curtas', () => {
     expect(shuffleBlocks(['a'])).toEqual(['a']);
     expect(shuffleBlocks([])).toEqual([]);
+  });
+});
+
+describe('normalizeCode', () => {
+  it('ignora espaços entre símbolos', () => {
+    expect(normalizeCode('  vidas -1 ')).toBe(normalizeCode('vidas - 1'));
+    expect(normalizeCode('x!=y')).toBe(normalizeCode('x != y'));
+  });
+
+  it('mantém o espaço que separa duas palavras', () => {
+    expect(normalizeCode('not  x')).toBe('not x');
+    expect(normalizeCode('notx')).not.toBe(normalizeCode('not x'));
+  });
+
+  it('trata aspas simples e duplas como iguais', () => {
+    expect(normalizeCode("'Codequest'")).toBe(normalizeCode('"Codequest"'));
+  });
+
+  it('preserva o conteúdo das strings', () => {
+    expect(normalizeCode('"a  b"')).not.toBe(normalizeCode('"a b"'));
+    expect(normalizeCode('"Oi"')).not.toBe(normalizeCode('"oi"'));
+  });
+
+  it('não fecha strings deixadas abertas', () => {
+    expect(normalizeCode('"Codequest')).not.toBe(normalizeCode('"Codequest"'));
   });
 });

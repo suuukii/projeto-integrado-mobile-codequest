@@ -10,6 +10,7 @@ import {
   getStageResult,
   isSessionFinished,
   selectOption,
+  typeAnswer,
   type StageSession,
 } from './stageSession';
 import type { LessonCard, StageResult } from './types';
@@ -64,6 +65,9 @@ export function useStageSession(
   const choose = (optionId: string) =>
     setSession(current => current && selectOption(current, optionId));
 
+  const write = (text: string) =>
+    setSession(current => current && typeAnswer(current, text));
+
   const verify = () => setSession(current => current && checkAnswer(current));
 
   const next = () => {
@@ -96,6 +100,7 @@ export function useStageSession(
     phase,
     reload: load,
     choose,
+    write,
     verify,
     next,
     retrySave,

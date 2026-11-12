@@ -94,8 +94,9 @@ Abra o **SQL Editor** do painel e execute o conteúdo destes arquivos, nesta ord
 3. `supabase/migrations/20261111000300_lesson_cards.sql`
 4. `supabase/migrations/20261111000400_profile_avatar.sql`
 5. `supabase/migrations/20261111000500_code_questions.sql`
+6. `supabase/migrations/20261112000600_code_input_questions.sql`
 
-O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto. O quinto cria os formatos "completar o código" e "ordenar o código" e adiciona uma questão de cada formato por etapa, totalizando 36 questões.
+O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto. O quinto cria os formatos "completar o código" e "ordenar o código" e adiciona uma questão de cada formato por etapa, totalizando 36 questões. O sexto remove questões copiadas por engano, reescreve as que repetiam o conteúdo de outra questão da mesma etapa, impede novas cópias e cria o formato "escrever o código", com uma questão por etapa, totalizando 42 questões. Ele pode ser executado de novo sem duplicar nada.
 
 ### 6. Configurar o ambiente Android
 
@@ -256,17 +257,22 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 - **Passos:** chegue à questão marcada como **Ordene o código**. Toque em um bloco e toque nele de novo. Depois monte o código fora de ordem e verifique. Quando a questão voltar, monte na ordem certa.
 - **Resultado esperado:** cada toque move o bloco para a área tracejada, com o número da linha, e tocar nele de novo o devolve. **Verificar** só ativa com todos os blocos posicionados. Na resposta errada, as linhas fora do lugar ficam vermelhas, as certas ficam verdes e aparece a ordem correta. Os blocos nunca aparecem já na ordem certa.
 
-### 22. Progressão pelas etapas
+### 22. Questão de escrever o código
+- **Pré-condições:** explicações de uma etapa concluídas.
+- **Passos:** chegue à questão marcada como **Escreva o código**, a última da etapa. Digite uma resposta errada e verifique. Quando a questão voltar, digite a resposta certa com espaços extras ou aspas simples, como `'Codequest'` na etapa 1.
+- **Resultado esperado:** o teclado abre sem correção automática nem letra maiúscula automática, e o texto digitado aparece dentro da lacuna. **Verificar** só ativa com algo digitado. Na resposta errada, o campo e a lacuna ficam vermelhos e aparece a resposta esperada. Espaços entre símbolos e o tipo de aspas não alteram o resultado, mas maiúsculas e minúsculas sim.
+
+### 23. Progressão pelas etapas
 - **Pré-condições:** etapa em andamento.
 - **Passos:** conclua todas as questões e toque em **Voltar à trilha**.
 - **Resultado esperado:** a tela de resultado mostra os acertos de primeira. Na trilha, o bloco da etapa fica roxo com ✓, a linha até a etapa seguinte fica roxa, a seguinte ganha o ▶ e o cartão do topo passa a mostrar o nome dela e o progresso atualizado.
 
-### 23. Avanço para a próxima etapa
+### 24. Avanço para a próxima etapa
 - **Pré-condições:** uma etapa concluída que não seja a última.
 - **Passos:** na tela de resultado, toque em **Próxima etapa**. Depois toque na seta de voltar.
 - **Resultado esperado:** a tela de resultado mostra "A seguir:" com o nome da próxima etapa e os botões **Próxima etapa** e **Voltar à trilha**. O primeiro abre a etapa seguinte, começando pelas explicações, e a seta volta para a trilha. Ao concluir a última etapa, só aparece **Voltar à trilha**.
 
-### 24. Registro e recuperação do progresso
+### 25. Registro e recuperação do progresso
 - **Pré-condições:** pelo menos uma etapa concluída.
 - **Passos:** saia da conta, entre novamente e consulte a tabela `user_progress` no painel.
 - **Resultado esperado:** a trilha mantém as etapas concluídas, e a tabela tem uma linha por etapa concluída.
@@ -296,13 +302,14 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 | --- | --- | --- |
 | "Variável de ambiente ausente" ao abrir | `.env` ausente ou incompleto | Preencha o `.env` e rode `npm start -- --reset-cache` |
 | Mudança no `.env` sem efeito | Cache do Metro | Rode `npm start -- --reset-cache` e recarregue o aplicativo |
-| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os cinco arquivos SQL na ordem indicada |
+| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os seis arquivos SQL na ordem indicada |
 | "Conta criada. Confirme seu e-mail" | **Confirm email** ativo | Confirme pelo e-mail ou desative a opção |
 | Limite de envio de e-mails | Limite do serviço padrão do Supabase | Aguarde ou desative **Confirm email** |
 | "Não foi possível carregar esta etapa" | Tabela de explicações ausente ou sem conexão | Aplique as migrações e confira a conexão |
 | "Não foi possível carregar o perfil" | Quarta migração não aplicada ou sem conexão | Execute `20261111000400_profile_avatar.sql` e confira a conexão |
 | "Não foi possível salvar a foto" | Quarta migração não aplicada ou sem conexão | Execute `20261111000400_profile_avatar.sql` e tente de novo |
 | Etapa sem as questões de completar e de ordenar | Quinta migração não aplicada | Execute `20261111000500_code_questions.sql` uma única vez |
+| Questões repetidas ou etapa sem a questão de escrever | Sexta migração não aplicada | Execute `20261112000600_code_input_questions.sql` |
 | Erro `already exists` no SQL | Arquivo executado duas vezes | Não execute de novo. Em um projeto sem dados importantes, remova as tabelas antes de refazer |
 
 ### Execução e testes

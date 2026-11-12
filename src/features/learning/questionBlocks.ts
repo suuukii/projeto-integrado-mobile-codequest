@@ -29,3 +29,44 @@ export function shuffleBlocks<T>(
   }
   return shuffled;
 }
+
+const isWordChar = (char: string | undefined) =>
+  char !== undefined && /\w/.test(char);
+
+/**
+ * Padroniza um trecho de código digitado para comparar com as respostas
+ * aceitas. Espaços só importam entre duas palavras (`not x`), e strings com
+ * aspas simples ou duplas são equivalentes, como no Python. O conteúdo das
+ * strings é mantido exatamente como foi digitado.
+ */
+export function normalizeCode(code: string): string {
+  const text = code.trim();
+  let result = '';
+  let i = 0;
+  while (i < text.length) {
+    const char = text[i];
+    if (char === '"' || char === "'") {
+      const end = text.indexOf(char, i + 1);
+      if (end === -1) {
+        // String sem fechamento: mantém como está para não virar resposta certa.
+        result += text.slice(i);
+        break;
+      }
+      result += `"${text.slice(i + 1, end)}"`;
+      i = end + 1;
+    } else if (/\s/.test(char)) {
+      let next = i;
+      while (next < text.length && /\s/.test(text[next])) {
+        next++;
+      }
+      if (isWordChar(result[result.length - 1]) && isWordChar(text[next])) {
+        result += ' ';
+      }
+      i = next;
+    } else {
+      result += char;
+      i++;
+    }
+  }
+  return result;
+}

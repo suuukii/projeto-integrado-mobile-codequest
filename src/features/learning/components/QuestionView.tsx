@@ -5,6 +5,7 @@ import type { AnswerFeedback } from '../stageSession';
 import type { Question } from '../types';
 import { CodeBlock } from './CodeBlock';
 import { CodeCompletionView } from './CodeCompletionView';
+import { CodeInputView } from './CodeInputView';
 import { CodeOrderView } from './CodeOrderView';
 import { OptionButton } from './OptionButton';
 import { getOptionState } from './optionState';
@@ -14,12 +15,14 @@ type QuestionViewProps = {
   answer: readonly string[];
   feedback: AnswerFeedback | null;
   onSelect: (optionId: string) => void;
+  onChangeText: (text: string) => void;
 };
 
 const TYPE_LABELS: Record<Question['type'], string> = {
   multiple_choice: 'Escolha a resposta',
   code_completion: 'Complete o código',
   code_order: 'Ordene o código',
+  code_input: 'Escreva o código',
 };
 
 export function QuestionView({
@@ -27,6 +30,7 @@ export function QuestionView({
   answer,
   feedback,
   onSelect,
+  onChangeText,
 }: QuestionViewProps) {
   const renderAnswer = () => {
     switch (question.type) {
@@ -46,6 +50,15 @@ export function QuestionView({
             answer={answer}
             feedback={feedback}
             onSelect={onSelect}
+          />
+        );
+      case 'code_input':
+        return (
+          <CodeInputView
+            question={question}
+            answer={answer}
+            feedback={feedback}
+            onChangeText={onChangeText}
           />
         );
       case 'multiple_choice':
