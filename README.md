@@ -95,8 +95,9 @@ Abra o **SQL Editor** do painel e execute o conteúdo destes arquivos, nesta ord
 4. `supabase/migrations/20261111000400_profile_avatar.sql`
 5. `supabase/migrations/20261111000500_code_questions.sql`
 6. `supabase/migrations/20261112000600_code_input_questions.sql`
+7. `supabase/migrations/20261113000700_more_python_stages.sql`
 
-O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto. O quinto cria os formatos "completar o código" e "ordenar o código" e adiciona uma questão de cada formato por etapa, totalizando 36 questões. O sexto remove questões copiadas por engano, reescreve as que repetiam o conteúdo de outra questão da mesma etapa, impede novas cópias e cria o formato "escrever o código", com uma questão por etapa, totalizando 42 questões. Ele pode ser executado de novo sem duplicar nada.
+O primeiro cria as tabelas, as políticas de RLS e o gatilho de criação de perfil. O segundo adiciona a trilha de Python com 6 etapas e 24 questões. O terceiro cria a tabela de explicações e adiciona 23 cartões, incluindo uma introdução à linguagem na primeira etapa. O quarto adiciona a foto de perfil e permite que cada usuário altere apenas a própria foto. O quinto cria os formatos "completar o código" e "ordenar o código" e adiciona uma questão de cada formato por etapa, totalizando 36 questões. O sexto remove questões copiadas por engano, reescreve as que repetiam o conteúdo de outra questão da mesma etapa, impede novas cópias e cria o formato "escrever o código", com uma questão por etapa, totalizando 42 questões. Ele pode ser executado de novo sem duplicar nada. O sétimo adiciona 8 etapas depois das existentes: condicionais, várias condições, listas, repetição com for, repetição com while, funções, retorno de funções e dicionários. Cada uma tem 3 cartões de explicação e 7 questões nos quatro formatos, e a trilha passa a ter 14 etapas, 98 questões e 47 cartões. Ele também pode ser executado de novo sem duplicar nada.
 
 ### 6. Configurar o ambiente Android
 
@@ -220,7 +221,7 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 ### 14. Visualização da trilha
 - **Pré-condições:** conta nova autenticada.
 - **Passos:** observe a tela principal e role até o fim da trilha.
-- **Resultado esperado:** o topo não tem saudação nem botão de sair. O cartão do topo mostra "Fundamentos de Python", "1. Introdução ao Python" e o progresso 0/6. Abaixo, as 6 etapas aparecem como blocos em zigue-zague, ligados por linhas sobre um fundo pontilhado. A primeira tem o símbolo ▶ e um contorno roxo, e as outras têm um cadeado e não respondem ao toque.
+- **Resultado esperado:** o topo não tem saudação nem botão de sair. O cartão do topo mostra "Fundamentos de Python", "1. Introdução ao Python" e o progresso 0/14. Abaixo, as 14 etapas aparecem como blocos em zigue-zague, ligados por linhas sobre um fundo pontilhado. A primeira tem o símbolo ▶ e um contorno roxo, e as outras têm um cadeado e não respondem ao toque.
 
 ### 15. Barra de navegação inferior
 - **Pré-condições:** usuário autenticado na trilha.
@@ -302,7 +303,7 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 | --- | --- | --- |
 | "Variável de ambiente ausente" ao abrir | `.env` ausente ou incompleto | Preencha o `.env` e rode `npm start -- --reset-cache` |
 | Mudança no `.env` sem efeito | Cache do Metro | Rode `npm start -- --reset-cache` e recarregue o aplicativo |
-| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os seis arquivos SQL na ordem indicada |
+| "Algo deu errado" no cadastro | Migrações não aplicadas | Execute os sete arquivos SQL na ordem indicada |
 | "Conta criada. Confirme seu e-mail" | **Confirm email** ativo | Confirme pelo e-mail ou desative a opção |
 | Limite de envio de e-mails | Limite do serviço padrão do Supabase | Aguarde ou desative **Confirm email** |
 | "Não foi possível carregar esta etapa" | Tabela de explicações ausente ou sem conexão | Aplique as migrações e confira a conexão |
@@ -310,6 +311,7 @@ Antes de começar, conclua a configuração e deixe o aplicativo aberto. Use uma
 | "Não foi possível salvar a foto" | Quarta migração não aplicada ou sem conexão | Execute `20261111000400_profile_avatar.sql` e tente de novo |
 | Etapa sem as questões de completar e de ordenar | Quinta migração não aplicada | Execute `20261111000500_code_questions.sql` uma única vez |
 | Questões repetidas ou etapa sem a questão de escrever | Sexta migração não aplicada | Execute `20261112000600_code_input_questions.sql` |
+| Trilha com apenas 6 etapas | Sétima migração não aplicada | Execute `20261113000700_more_python_stages.sql` |
 | Erro `already exists` no SQL | Arquivo executado duas vezes | Não execute de novo. Em um projeto sem dados importantes, remova as tabelas antes de refazer |
 
 ### Execução e testes
