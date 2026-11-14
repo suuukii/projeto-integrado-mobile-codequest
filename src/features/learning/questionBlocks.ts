@@ -11,10 +11,10 @@ export function splitAtBlank(code: string): [string, string] | null {
 }
 
 /**
- * Embaralha os blocos de uma questão de ordenar. Garante que o resultado não
- * fique na ordem original, para que a resposta nunca venha pronta.
+ * Embaralha as alternativas de uma questão de escolha, para que a resposta
+ * certa não fique sempre na mesma posição.
  */
-export function shuffleBlocks<T>(
+export function shuffleOptions<T>(
   items: readonly T[],
   random: () => number = Math.random,
 ): T[] {
@@ -23,6 +23,18 @@ export function shuffleBlocks<T>(
     const j = Math.floor(random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
+  return shuffled;
+}
+
+/**
+ * Embaralha os blocos de uma questão de ordenar. Garante que o resultado não
+ * fique na ordem original, para que a resposta nunca venha pronta.
+ */
+export function shuffleBlocks<T>(
+  items: readonly T[],
+  random: () => number = Math.random,
+): T[] {
+  const shuffled = shuffleOptions(items, random);
   const unchanged = shuffled.every((item, index) => item === items[index]);
   if (unchanged && shuffled.length > 1) {
     shuffled.push(shuffled.shift() as T);

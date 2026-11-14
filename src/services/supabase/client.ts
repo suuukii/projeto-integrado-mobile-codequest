@@ -6,6 +6,7 @@ import { AppState } from 'react-native';
 
 import { env } from '../../config/env';
 import type { Database } from './database.types';
+import { createFetchWithTimeout } from './fetchWithTimeout';
 
 export const supabase = createClient<Database>(
   env.supabaseUrl,
@@ -17,6 +18,7 @@ export const supabase = createClient<Database>(
       persistSession: true,
       detectSessionInUrl: false,
     },
+    global: { fetch: createFetchWithTimeout() },
   },
 );
 
