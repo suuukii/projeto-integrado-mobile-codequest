@@ -18,6 +18,10 @@ export function CodeVisual({ code, output, animate }: CodeVisualProps) {
 
   useEffect(() => {
     if (!animate) {
+      // A preferência por menos movimento pode chegar depois da primeira
+      // renderização, com a digitação já em andamento: mostra tudo pronto.
+      setTyped(code.length);
+      outputOpacity.setValue(1);
       return;
     }
     const step = getTypingDuration(code) / Math.max(code.length, 1);
@@ -31,7 +35,7 @@ export function CodeVisual({ code, output, animate }: CodeVisualProps) {
       });
     }, step);
     return () => clearInterval(timer);
-  }, [animate, code]);
+  }, [animate, code, outputOpacity]);
 
   useEffect(() => {
     if (done && animate) {

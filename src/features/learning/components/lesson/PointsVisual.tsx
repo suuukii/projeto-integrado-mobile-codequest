@@ -16,9 +16,12 @@ export function PointsVisual({ points, animate }: PointsVisualProps) {
 
   useEffect(() => {
     if (!animate) {
+      // A preferência por menos movimento pode chegar com a animação já em
+      // andamento: mostra todos os tópicos de uma vez.
+      progress.forEach(value => value.setValue(1));
       return;
     }
-    Animated.stagger(
+    const animation = Animated.stagger(
       180,
       progress.map(value =>
         Animated.spring(value, {
@@ -27,7 +30,9 @@ export function PointsVisual({ points, animate }: PointsVisualProps) {
           useNativeDriver: true,
         }),
       ),
-    ).start();
+    );
+    animation.start();
+    return () => animation.stop();
   }, [animate, progress]);
 
   return (

@@ -15,6 +15,10 @@ export function MascotVisual({ animate }: MascotVisualProps) {
 
   useEffect(() => {
     if (!animate) {
+      // A preferência por menos movimento pode chegar com a entrada já em
+      // andamento: mostra o mascote parado.
+      entrance.setValue(1);
+      float.setValue(0);
       return;
     }
     const loop = Animated.loop(
@@ -33,13 +37,17 @@ export function MascotVisual({ animate }: MascotVisualProps) {
         }),
       ]),
     );
-    Animated.spring(entrance, {
+    const spring = Animated.spring(entrance, {
       toValue: 1,
       friction: 4,
       tension: 60,
       useNativeDriver: true,
-    }).start(() => loop.start());
-    return () => loop.stop();
+    });
+    spring.start(({ finished }) => finished && loop.start());
+    return () => {
+      spring.stop();
+      loop.stop();
+    };
   }, [animate, entrance, float]);
 
   return (

@@ -16,9 +16,13 @@ export function VariableVisual({ assignment, animate }: VariableVisualProps) {
 
   useEffect(() => {
     if (!animate) {
+      // A preferência por menos movimento pode chegar com a animação já em
+      // andamento: mostra o valor dentro da caixa.
+      drop.setValue(1);
+      glow.setValue(1);
       return;
     }
-    Animated.sequence([
+    const animation = Animated.sequence([
       Animated.delay(300),
       Animated.timing(drop, {
         toValue: 1,
@@ -31,7 +35,9 @@ export function VariableVisual({ assignment, animate }: VariableVisualProps) {
         duration: 300,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]);
+    animation.start();
+    return () => animation.stop();
   }, [animate, drop, glow]);
 
   return (
