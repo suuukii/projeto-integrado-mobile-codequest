@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ícone da tela de abertura no Android 12 ou superior. O sistema recorta o
+  ícone em um círculo com 2/3 da área, então o logo ganha uma margem.
+-->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/splash_logo"
+    android:inset="20%" />

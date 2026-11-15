@@ -20,13 +20,18 @@ export function LessonCardView({ card }: LessonCardViewProps) {
   const entrance = useRef(new Animated.Value(animate ? 0 : 1)).current;
 
   useEffect(() => {
-    if (animate) {
-      Animated.timing(entrance, {
-        toValue: 1,
-        duration: 320,
-        useNativeDriver: true,
-      }).start();
+    if (!animate) {
+      // A preferência por menos movimento pode chegar depois da montagem.
+      entrance.setValue(1);
+      return;
     }
+    const animation = Animated.timing(entrance, {
+      toValue: 1,
+      duration: 320,
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
   }, [animate, entrance]);
 
   return (

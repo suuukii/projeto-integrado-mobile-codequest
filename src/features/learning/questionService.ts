@@ -1,5 +1,5 @@
 import { supabase } from '../../services/supabase/client';
-import { shuffleBlocks } from './questionBlocks';
+import { shuffleBlocks, shuffleOptions } from './questionBlocks';
 import type { Question, QuestionOption } from './types';
 
 export async function fetchStageQuestions(
@@ -40,6 +40,10 @@ export async function fetchStageQuestions(
         options: shuffleBlocks(options),
       };
     }
-    return { ...base, type: row.type, options };
+    if (row.type === 'code_input') {
+      // A primeira opção é a solução exibida; a ordem precisa ser mantida.
+      return { ...base, type: 'code_input', options };
+    }
+    return { ...base, type: row.type, options: shuffleOptions(options) };
   });
 }

@@ -1,4 +1,4 @@
-import { normalizeCode } from './questionBlocks';
+import { normalizeCode, shuffleBlocks } from './questionBlocks';
 import type { Question, StageResult } from './types';
 
 export type AnswerFeedback = 'correct' | 'incorrect';
@@ -121,6 +121,20 @@ export function checkAnswer(session: StageSession): StageSession {
   };
 }
 
+/**
+ * Uma questão de ordenar volta com os blocos em outra disposição. O embaralhamento
+ * parte da ordem correta, então a resposta nunca volta pronta.
+ */
+function reshuffled(question: Question): Question {
+  if (question.type !== 'code_order') {
+    return question;
+  }
+  const inCorrectOrder = question.correctOrder
+    .map(id => question.options.find(option => option.id === id))
+    .filter(option => option !== undefined);
+  return { ...question, options: shuffleBlocks(inCorrectOrder) };
+}
+
 /** Questões respondidas errado voltam para o fim da fila. */
 export function advance(session: StageSession): StageSession {
   const [question, ...rest] = session.queue;
@@ -130,7 +144,8 @@ export function advance(session: StageSession): StageSession {
 
   return {
     ...session,
-    queue: session.feedback === 'correct' ? rest : [...rest, question],
+    queue:
+      session.feedback === 'correct' ? rest : [...rest, reshuffled(question)],
     answer: [],
     feedback: null,
   };

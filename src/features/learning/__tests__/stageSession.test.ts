@@ -129,6 +129,18 @@ describe('questão de ordenar blocos', () => {
     expect(checkAnswer(pick(['l1', 'l2', 'l3'])).feedback).toBe('correct');
     expect(checkAnswer(pick(['l2', 'l1', 'l3'])).feedback).toBe('incorrect');
   });
+
+  it('reembaralha os blocos quando a questão volta para a fila', () => {
+    const pick = (ids: string[]) =>
+      ids.reduce(selectOption, createStageSession([ordering]));
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const [returned] = advance(checkAnswer(pick(['l2', 'l1', 'l3']))).queue;
+      const order = returned.options.map(option => option.id);
+      expect([...order].sort()).toEqual(['l1', 'l2', 'l3']);
+      // A resposta nunca volta pronta.
+      expect(order).not.toEqual(['l1', 'l2', 'l3']);
+    }
+  });
 });
 
 describe('questão de escrever o código', () => {

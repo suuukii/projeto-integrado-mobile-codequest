@@ -40,11 +40,29 @@ export async function fetchStageProgress(
   }));
 }
 
+/**
+ * Registra a conclusão da etapa. Ao refazer uma etapa, o melhor resultado é
+ * mantido: uma tentativa pior não substitui a anterior.
+ */
 export async function saveStageCompletion(
   userId: string,
   stageId: string,
   result: StageResult,
 ): Promise<void> {
+  const { data: previous, error: readError } = await supabase
+    .from('user_progress')
+    .select('first_try_correct')
+    .eq('user_id', userId)
+    .eq('stage_id', stageId)
+    .maybeSingle();
+
+  if (readError) {
+    throw readError;
+  }
+  if (previous && previous.first_try_correct >= result.firstTryCorrect) {
+    return;
+  }
+
   const { error } = await supabase.from('user_progress').upsert({
     user_id: userId,
     stage_id: stageId,

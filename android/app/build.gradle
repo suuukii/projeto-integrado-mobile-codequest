@@ -57,7 +57,18 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
+
+/**
+ * Assinatura de release. As credenciais ficam em android/keystore.properties,
+ * que não vai para o git (use keystore.properties.example como modelo). Sem
+ * esse arquivo, o release é assinado com a chave de debug, só para testes.
+ */
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -92,16 +103,25 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig keystorePropertiesFile.exists()
+                ? signingConfigs.release
+                : signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }

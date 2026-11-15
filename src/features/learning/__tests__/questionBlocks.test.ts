@@ -1,4 +1,9 @@
-import { normalizeCode, shuffleBlocks, splitAtBlank } from '../questionBlocks';
+import {
+  normalizeCode,
+  shuffleBlocks,
+  shuffleOptions,
+  splitAtBlank,
+} from '../questionBlocks';
 
 describe('splitAtBlank', () => {
   it('separa o código antes e depois da lacuna', () => {
@@ -7,6 +12,27 @@ describe('splitAtBlank', () => {
 
   it('devolve null quando não há lacuna', () => {
     expect(splitAtBlank('print(1)')).toBeNull();
+  });
+});
+
+describe('shuffleOptions', () => {
+  it('mantém os mesmos itens', () => {
+    expect(shuffleOptions(['a', 'b', 'c', 'd']).sort()).toEqual([
+      'a',
+      'b',
+      'c',
+      'd',
+    ]);
+  });
+
+  it('muda a posição dos itens conforme o sorteio', () => {
+    expect(shuffleOptions(['a', 'b', 'c'], () => 0)).toEqual(['b', 'c', 'a']);
+  });
+
+  it('não altera a lista recebida', () => {
+    const items = ['a', 'b', 'c'];
+    shuffleOptions(items, () => 0);
+    expect(items).toEqual(['a', 'b', 'c']);
   });
 });
 
